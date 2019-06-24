@@ -14,10 +14,14 @@
 
     <Button
         android:id="@+id/button"
+        style="@style/Widget.AppCompat.Button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/spinner"
+        android:background="@color/colorPrimaryDark"
         android:text="Find"
+        android:textColor="@android:color/background_light"
+        android:textStyle="bold"
         app:layout_constraintTop_toBottomOf="@+id/spinner"
         tools:ignore="MissingConstraints"
         tools:layout_editor_absoluteX="0dp" />
@@ -38,8 +42,6 @@
             android:layout_height="wrap_content"
             tools:ignore="NestedScrolling" />
     </ScrollView>
-
-
 
     <org.eazegraph.lib.charts.PieChart
         android:id="@+id/piechart"

@@ -130,8 +130,8 @@ public class CallWebService extends AsyncTask<String, Void, String> {
 
     @Override
     protected String doInBackground(String... params) {
-        String URL = "http://192.168.137.126:8080/ws";
-        String NAMESPACE = "http://192.168.137.126:8080/soapservice";
+        String URL = "http://192.168.137.122:8080/ws";
+        String NAMESPACE = "http://192.168.137.122:8080/soapservice";
         String envelope = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:tns=\"" + NAMESPACE + "\">" +
                 "<soapenv:Body>" +
                 "<tns:" + this.METHOD_NAME + ">" +
