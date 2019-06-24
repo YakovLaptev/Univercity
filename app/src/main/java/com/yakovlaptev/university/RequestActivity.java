@@ -13,11 +13,15 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import org.eazegraph.lib.charts.PieChart;
+
 public class RequestActivity extends AppCompatActivity {
 
     Button button;
     ListView list;
     Spinner spinner;
+    PieChart mPieChart;
+    PieChart mPieChart2;
 
     String SOAP_ACTION = "";
     String METHOD_NAME = "";
@@ -37,6 +41,8 @@ public class RequestActivity extends AppCompatActivity {
         button = (Button)findViewById(R.id.button);
         list = (ListView)findViewById(R.id.listView);
         spinner = (Spinner) findViewById(R.id.spinner);
+        mPieChart = (PieChart) findViewById(R.id.piechart);
+        mPieChart2 = (PieChart) findViewById(R.id.piechart2);
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -72,7 +78,7 @@ public class RequestActivity extends AppCompatActivity {
                 }
                 REQUESTVALUE = selected;
                 Log.i("selected", selected);
-                new CallWebService(SOAP_ACTION, METHOD_NAME, PARAMETER_NAME, REQUESTVALUE, list, context).execute();
+                new CallWebService(SOAP_ACTION, METHOD_NAME, PARAMETER_NAME, REQUESTVALUE, list, mPieChart, mPieChart2, context).execute();
             }
         });
 
@@ -81,7 +87,7 @@ public class RequestActivity extends AppCompatActivity {
         PARAMETER_NAME = "fieldName";
         REQUESTVALUE = getIntent().getStringExtra("request");
 
-        new CallWebService(SOAP_ACTION, METHOD_NAME, PARAMETER_NAME, REQUESTVALUE, spinner, context).execute();
+        new CallWebService(SOAP_ACTION, METHOD_NAME, PARAMETER_NAME, REQUESTVALUE, spinner, null, null,context).execute();
     }
 
     @Override

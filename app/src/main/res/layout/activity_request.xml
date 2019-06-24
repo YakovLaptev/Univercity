@@ -22,11 +22,49 @@
         tools:ignore="MissingConstraints"
         tools:layout_editor_absoluteX="0dp" />
 
-    <ListView
-        android:id="@+id/listView"
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/piechart"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/piechart">
+
+        <ListView
+            android:id="@+id/listView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:ignore="NestedScrolling" />
+    </ScrollView>
+
+
+
+    <org.eazegraph.lib.charts.PieChart
+        android:id="@+id/piechart"
+        android:layout_width="190dp"
+        android:layout_height="190dp"
         android:layout_below="@+id/button"
+        android:layout_marginStart="8dp"
+        android:padding="8dp"
+        app:egLegendTextSize="12sp"
+        app:egUsePieRotation="true"
+        app:egValueTextSize="35sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button" />
+
+    <org.eazegraph.lib.charts.PieChart
+        android:id="@+id/piechart2"
+        android:layout_width="190dp"
+        android:layout_height="190dp"
+        android:layout_below="@+id/button"
+        android:layout_marginEnd="8dp"
+        android:padding="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        app:egLegendTextSize="12sp"
+        app:egUsePieRotation="true"
+        app:egValueTextSize="35sp"/>
 
 </android.support.constraint.ConstraintLayout>

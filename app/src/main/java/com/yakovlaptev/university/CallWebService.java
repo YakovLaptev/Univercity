@@ -1,8 +1,11 @@
 package com.yakovlaptev.university;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.util.Log;
 import android.util.Xml;
 import android.view.View;
@@ -24,6 +27,8 @@ import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
 import org.apache.http.util.EntityUtils;
+import org.eazegraph.lib.charts.PieChart;
+import org.eazegraph.lib.models.PieModel;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -32,11 +37,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 public class CallWebService extends AsyncTask<String, Void, String> {
 
     View view;
+    PieChart mPieChart;
+    PieChart mPieChart2;
 
     private String SOAP_ACTION;
     private String METHOD_NAME;
@@ -47,15 +57,18 @@ public class CallWebService extends AsyncTask<String, Void, String> {
     private final DefaultHttpClient httpClient = new DefaultHttpClient();
 
 
-    public CallWebService(String action, String method, String parameter_name, String requestValue, View view, Context context) {
+    public CallWebService(String action, String method, String parameter_name, String requestValue, View view, PieChart mPieChart, PieChart mPieChart2,Context context) {
         this.SOAP_ACTION = action;
         this.METHOD_NAME = method;
         this.PARAMETER_NAME = parameter_name;
         this.REQUESTVALUE = requestValue;
         this.view = view;
+        this.mPieChart = mPieChart;
+        this.mPieChart2 = mPieChart2;
         this.context = context;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onPostExecute(String s) {
         XmlPullParser parser;
@@ -63,33 +76,67 @@ public class CallWebService extends AsyncTask<String, Void, String> {
         try {
             parser = createXmlPullParser(s);
             result = parseXML(parser);
-            Log.i("result", result.toString());
+            //Log.i("result", result.toString());
         } catch (IOException | XmlPullParserException e) {
             e.printStackTrace();
         }
         String[] resultArray = new String[result.size()];
-        for (int k=0; k < result.size(); k++) {
+        for (int k = 0; k < result.size(); k++) {
             resultArray[k] = result.get(k).toString();
         }
-        ArrayAdapter adapter = new ArrayAdapter(context, android.R.layout.simple_list_item_1,resultArray);
-        if(view.getClass() == ListView.class) {
+        ArrayAdapter adapter = new ArrayAdapter(context, android.R.layout.simple_list_item_1, resultArray);
+        if (view.getClass() == ListView.class) {
             ListView list = (ListView) view;
             list.setAdapter(adapter);
         } else {
             Spinner spinner = (Spinner) view;
             spinner.setAdapter(adapter);
         }
+        if (mPieChart != null && mPieChart2 != null ) {
+            Random rnd = new Random();
+            Map<String, Integer> hashMapForAnswer1 = new HashMap<String, Integer>();
+            Map<String, Integer> hashMapForAnswer2 = new HashMap<String, Integer>();
+            for (int k = 0; k < result.size(); k++) {
+                Object object = result.get(k);
+                if (object.getClass() == Survey.class) {
+                    Survey survey = (Survey) object;
+                    if (hashMapForAnswer1.containsKey(survey.getAnswer1())) {
+                        hashMapForAnswer1.put(survey.getAnswer1(), hashMapForAnswer1.get(survey.getAnswer1()) + 1);
+                    } else {
+                        hashMapForAnswer1.put(survey.getAnswer1(), 1);
+                    }
+                    Log.i("hashMapForPie", String.valueOf(hashMapForAnswer1.get(survey.getAnswer1())));
+                    if (hashMapForAnswer2.containsKey(survey.getAnswer2())) {
+                        hashMapForAnswer2.put(survey.getAnswer2(), hashMapForAnswer2.get(survey.getAnswer2()) + 1);
+                    } else {
+                        hashMapForAnswer2.put(survey.getAnswer2(), 1);
+                    }
+                }
+            }
+            for (String key : hashMapForAnswer1.keySet()) {
+                mPieChart.addPieSlice(new PieModel(key, hashMapForAnswer1.get(key), new Random().nextInt()));
+            }
+            mPieChart.setTooltipText("Вопрос 1");
+            mPieChart.startAnimation();
+            for (String key : hashMapForAnswer2.keySet()) {
+                mPieChart2.addPieSlice(new PieModel(key, hashMapForAnswer2.get(key), new Random().nextInt()));
+            }
+            mPieChart.setTooltipText("Вопрос 2");
+
+            mPieChart2.startAnimation();
+        }
+
     }
 
     @Override
     protected String doInBackground(String... params) {
         String URL = "http://192.168.137.126:8080/ws";
         String NAMESPACE = "http://192.168.137.126:8080/soapservice";
-        String envelope = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:tns=\""+ NAMESPACE +"\">" +
+        String envelope = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:tns=\"" + NAMESPACE + "\">" +
                 "<soapenv:Body>" +
-                "<tns:"+this.METHOD_NAME+">" +
-                "<tns:"+this.PARAMETER_NAME+">"+this.REQUESTVALUE+"</tns:"+this.PARAMETER_NAME+">" +
-                "</tns:"+this.METHOD_NAME+">" +
+                "<tns:" + this.METHOD_NAME + ">" +
+                "<tns:" + this.PARAMETER_NAME + ">" + this.REQUESTVALUE + "</tns:" + this.PARAMETER_NAME + ">" +
+                "</tns:" + this.METHOD_NAME + ">" +
                 "</soapenv:Body>" +
                 "</soapenv:Envelope>";
         HttpParams httpParams = httpClient.getParams();
@@ -203,7 +250,7 @@ public class CallWebService extends AsyncTask<String, Void, String> {
             eventType = parser.next();
         }
 
-        if(surveys.size() > 0) {
+        if (surveys.size() > 0) {
             return surveys;
         } else {
             return items;

@@ -18,14 +18,14 @@ public class Survey {
     @Override
     public String toString() {
         return "(" + id +
-                ")\n Институт:" + institute +
-                "\n Кафедра:" + department +
-                "\n Код специальности:'" + specialtyCode +
-                "\n Специальность:" + specialty +
-                "\n Курс:" + curse +
-                "\n Форма обучения:" + studyForm+
-                "\n Ответ 1:" + answer1 +
-                "\n Ответ 2:" + answer2;
+                ")\n Институт: " + institute +
+                "\n Кафедра: " + department +
+                "\n Код специальности: " + specialtyCode +
+                "\n Специальность: " + specialty +
+                "\n Курс: " + curse +
+                "\n Форма обучения: " + studyForm+
+                "\n Ответ 1: " + answer1 +
+                "\n Ответ 2: " + answer2;
     }
 
     public int getId() {
