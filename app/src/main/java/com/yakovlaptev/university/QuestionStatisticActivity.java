@@ -1,22 +1,20 @@
 package com.yakovlaptev.university;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import org.eazegraph.lib.charts.PieChart;
-import org.w3c.dom.Text;
 
-public class RequestActivity extends AppCompatActivity {
+public class QuestionStatisticActivity extends AppCompatActivity {
 
     Button button;
     ListView list;
@@ -34,7 +32,7 @@ public class RequestActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_request);
+        setContentView(R.layout.activity_question_statistic);
         final Context context = this;
 
         ActionBar actionBar = getSupportActionBar();

@@ -14,6 +14,7 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.yakovlaptev.university.entity.Question;
 import com.yakovlaptev.university.entity.Survey;
 
 import org.apache.http.HttpEntity;
@@ -45,8 +46,8 @@ import java.util.Random;
 public class CallWebService extends AsyncTask<String, Void, String> {
 
     View view;
-    PieChart mPieChart;
-    PieChart mPieChart2;
+    View mPieChart;
+    View mPieChart2;
 
     private String SOAP_ACTION;
     private String METHOD_NAME;
@@ -57,7 +58,7 @@ public class CallWebService extends AsyncTask<String, Void, String> {
     private final DefaultHttpClient httpClient = new DefaultHttpClient();
 
 
-    public CallWebService(String action, String method, String parameter_name, String requestValue, View view, PieChart mPieChart, PieChart mPieChart2,Context context) {
+    public CallWebService(String action, String method, String parameter_name, String requestValue, View view, View mPieChart, View mPieChart2,Context context) {
         this.SOAP_ACTION = action;
         this.METHOD_NAME = method;
         this.PARAMETER_NAME = parameter_name;
@@ -84,61 +85,76 @@ public class CallWebService extends AsyncTask<String, Void, String> {
         for (int k = 0; k < result.size(); k++) {
             resultArray[k] = result.get(k).toString();
         }
-        ArrayAdapter adapter = new ArrayAdapter(context, android.R.layout.simple_list_item_1, resultArray);
-        if (view.getClass() == ListView.class) {
-            ListView list = (ListView) view;
-            list.setAdapter(adapter);
-        } else {
-            Spinner spinner = (Spinner) view;
-            spinner.setAdapter(adapter);
-        }
-        if (mPieChart != null && mPieChart2 != null ) {
-            Random rnd = new Random();
-            Map<String, Integer> hashMapForAnswer1 = new HashMap<String, Integer>();
-            Map<String, Integer> hashMapForAnswer2 = new HashMap<String, Integer>();
-            for (int k = 0; k < result.size(); k++) {
-                Object object = result.get(k);
-                if (object.getClass() == Survey.class) {
-                    Survey survey = (Survey) object;
-                    if (hashMapForAnswer1.containsKey(survey.getAnswer1())) {
-                        hashMapForAnswer1.put(survey.getAnswer1(), hashMapForAnswer1.get(survey.getAnswer1()) + 1);
-                    } else {
-                        hashMapForAnswer1.put(survey.getAnswer1(), 1);
-                    }
-                    Log.i("hashMapForPie", String.valueOf(hashMapForAnswer1.get(survey.getAnswer1())));
-                    if (hashMapForAnswer2.containsKey(survey.getAnswer2())) {
-                        hashMapForAnswer2.put(survey.getAnswer2(), hashMapForAnswer2.get(survey.getAnswer2()) + 1);
-                    } else {
-                        hashMapForAnswer2.put(survey.getAnswer2(), 1);
+        if(view != null) {
+            ArrayAdapter adapter = new ArrayAdapter(context, android.R.layout.simple_list_item_1, resultArray);
+            if (view.getClass() == ListView.class) {
+                ListView list = (ListView) view;
+                list.setAdapter(adapter);
+            } else {
+                Spinner spinner = (Spinner) view;
+                spinner.setAdapter(adapter);
+            }
+            if (mPieChart != null && mPieChart2 != null) {
+                PieChart mPieChartView1 = (PieChart) mPieChart;
+                PieChart mPieChartView2 = (PieChart) mPieChart2;
+                Random rnd = new Random();
+                Map<String, Integer> hashMapForAnswer1 = new HashMap<String, Integer>();
+                Map<String, Integer> hashMapForAnswer2 = new HashMap<String, Integer>();
+                for (int k = 0; k < result.size(); k++) {
+                    Object object = result.get(k);
+                    if (object.getClass() == Survey.class) {
+                        Survey survey = (Survey) object;
+                        if (hashMapForAnswer1.containsKey(survey.getAnswer1())) {
+                            hashMapForAnswer1.put(survey.getAnswer1(), hashMapForAnswer1.get(survey.getAnswer1()) + 1);
+                        } else {
+                            hashMapForAnswer1.put(survey.getAnswer1(), 1);
+                        }
+                        Log.i("hashMapForPie", String.valueOf(hashMapForAnswer1.get(survey.getAnswer1())));
+                        if (hashMapForAnswer2.containsKey(survey.getAnswer2())) {
+                            hashMapForAnswer2.put(survey.getAnswer2(), hashMapForAnswer2.get(survey.getAnswer2()) + 1);
+                        } else {
+                            hashMapForAnswer2.put(survey.getAnswer2(), 1);
+                        }
                     }
                 }
+                for (String key : hashMapForAnswer1.keySet()) {
+                    mPieChartView1.addPieSlice(new PieModel(key, hashMapForAnswer1.get(key), new Random().nextInt()));
+                }
+                mPieChartView1.startAnimation();
+                for (String key : hashMapForAnswer2.keySet()) {
+                    mPieChartView2.addPieSlice(new PieModel(key, hashMapForAnswer2.get(key), new Random().nextInt()));
+                }
+                mPieChartView2.startAnimation();
             }
-            for (String key : hashMapForAnswer1.keySet()) {
-                mPieChart.addPieSlice(new PieModel(key, hashMapForAnswer1.get(key), new Random().nextInt()));
-            }
-            mPieChart.setTooltipText("Вопрос 1");
-            mPieChart.startAnimation();
-            for (String key : hashMapForAnswer2.keySet()) {
-                mPieChart2.addPieSlice(new PieModel(key, hashMapForAnswer2.get(key), new Random().nextInt()));
-            }
-            mPieChart.setTooltipText("Вопрос 2");
-
-            mPieChart2.startAnimation();
+        } else {
+            TextView textView1 = (TextView) mPieChart;
+            TextView textView2 = (TextView) mPieChart2;
+            textView1.setText(String.format("%s%s", textView1.getText(), ((List<Question>) result).get(0).getText()));
+            textView2.setText(String.format("%s%s", textView2.getText(), ((List<Question>) result).get(1).getText()));
         }
-
     }
 
     @Override
     protected String doInBackground(String... params) {
-        String URL = "http://192.168.137.122:8080/ws";
-        String NAMESPACE = "http://192.168.137.122:8080/soapservice";
-        String envelope = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:tns=\"" + NAMESPACE + "\">" +
-                "<soapenv:Body>" +
-                "<tns:" + this.METHOD_NAME + ">" +
-                "<tns:" + this.PARAMETER_NAME + ">" + this.REQUESTVALUE + "</tns:" + this.PARAMETER_NAME + ">" +
-                "</tns:" + this.METHOD_NAME + ">" +
-                "</soapenv:Body>" +
-                "</soapenv:Envelope>";
+        String URL = "http://192.168.137.126:8080/ws";
+        String NAMESPACE = "http://192.168.137.126:8080/soapservice";
+        String envelope;
+        if(this.PARAMETER_NAME.equals("")) {
+            envelope = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:tns=\"" + NAMESPACE + "\">" +
+                    "<soapenv:Body>" +
+                    "<tns:" + this.METHOD_NAME + ">" +
+                    "</tns:" + this.METHOD_NAME + ">" +
+                    "</soapenv:Body>" +
+                    "</soapenv:Envelope>";
+        } else {
+            envelope = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:tns=\"" + NAMESPACE + "\">" +
+                    "<soapenv:Body>" +
+                    "<tns:" + this.METHOD_NAME + ">" +
+                    "<tns:" + this.PARAMETER_NAME + ">" + this.REQUESTVALUE + "</tns:" + this.PARAMETER_NAME + ">" +
+                    "</tns:" + this.METHOD_NAME + ">" +
+                    "</soapenv:Body>" +
+                    "</soapenv:Envelope>";
+        }
         HttpParams httpParams = httpClient.getParams();
         HttpConnectionParams.setConnectionTimeout(httpParams, 10000);
         HttpConnectionParams.setSoTimeout(httpParams, 15000);
@@ -179,9 +195,11 @@ public class CallWebService extends AsyncTask<String, Void, String> {
 
     private List parseXML(XmlPullParser parser) throws XmlPullParserException, IOException {
         List<Survey> surveys = new ArrayList<>();
+        List<Question> questions = new ArrayList<>();
         List<String> items = new ArrayList<>();
         int eventType = parser.getEventType();
         Survey survey = null;
+        Question question = null;
         while (eventType != XmlPullParser.END_DOCUMENT) {
             String name = "";
             if (eventType == XmlPullParser.START_DOCUMENT) {
@@ -192,6 +210,8 @@ public class CallWebService extends AsyncTask<String, Void, String> {
                     survey = new Survey();
                 } else if (name.equals("ns2:item")) {
                     items.add(parser.nextText());
+                } else if (name.equals("ns2:question")) {
+                    question = new Question();
                 } else if (survey != null) {
                     switch (name) {
                         case "ns2:id": {
@@ -240,18 +260,35 @@ public class CallWebService extends AsyncTask<String, Void, String> {
                             break;
                         }
                     }
+                } else if (question != null) {
+                    switch (name) {
+                        case "ns2:id": {
+                            String value = parser.nextText();
+                            question.setId(Integer.parseInt(value));
+                            break;
+                        }
+                        case "ns2:text": {
+                            String value = parser.nextText();
+                            question.setText(value);
+                            break;
+                        }
+                    }
                 }
             } else if (eventType == XmlPullParser.END_TAG) {
                 name = parser.getName();
                 if (name.equalsIgnoreCase("ns2:value") && survey != null) {
                     surveys.add(survey);
+                } else if (name.equalsIgnoreCase("ns2:question") && question != null) {
+                    questions.add(question);
+                    //Log.i("question", question.toString());
                 }
             }
             eventType = parser.next();
         }
-
         if (surveys.size() > 0) {
             return surveys;
+        } else if (questions.size() > 0) {
+            return questions;
         } else {
             return items;
         }
