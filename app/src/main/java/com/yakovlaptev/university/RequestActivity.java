@@ -93,7 +93,7 @@ public class RequestActivity extends AppCompatActivity {
         PARAMETER_NAME = "fieldName";
         REQUESTVALUE = getIntent().getStringExtra("request");
 
-        new CallWebService(SOAP_ACTION, METHOD_NAME, PARAMETER_NAME, REQUESTVALUE, spinner, null, null,context).execute();
+        new CallWebService(SOAP_ACTION, METHOD_NAME, PARAMETER_NAME, REQUESTVALUE, spinner, null, null, context).execute();
     }
 
     @Override

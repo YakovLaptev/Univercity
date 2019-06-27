@@ -29,7 +29,10 @@ import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
 import org.apache.http.util.EntityUtils;
 import org.eazegraph.lib.charts.PieChart;
+import org.eazegraph.lib.charts.ValueLineChart;
 import org.eazegraph.lib.models.PieModel;
+import org.eazegraph.lib.models.ValueLinePoint;
+import org.eazegraph.lib.models.ValueLineSeries;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -58,7 +61,7 @@ public class CallWebService extends AsyncTask<String, Void, String> {
     private final DefaultHttpClient httpClient = new DefaultHttpClient();
 
 
-    public CallWebService(String action, String method, String parameter_name, String requestValue, View view, View mPieChart, View mPieChart2,Context context) {
+    public CallWebService(String action, String method, String parameter_name, String requestValue, View view, View mPieChart, View mPieChart2, Context context) {
         this.SOAP_ACTION = action;
         this.METHOD_NAME = method;
         this.PARAMETER_NAME = parameter_name;
@@ -85,7 +88,7 @@ public class CallWebService extends AsyncTask<String, Void, String> {
         for (int k = 0; k < result.size(); k++) {
             resultArray[k] = result.get(k).toString();
         }
-        if(view != null) {
+        if (view != null) {
             ArrayAdapter adapter = new ArrayAdapter(context, android.R.layout.simple_list_item_1, resultArray);
             if (view.getClass() == ListView.class) {
                 ListView list = (ListView) view;
@@ -127,10 +130,54 @@ public class CallWebService extends AsyncTask<String, Void, String> {
                 mPieChartView2.startAnimation();
             }
         } else {
-            TextView textView1 = (TextView) mPieChart;
-            TextView textView2 = (TextView) mPieChart2;
-            textView1.setText(String.format("%s%s", textView1.getText(), ((List<Question>) result).get(0).getText()));
-            textView2.setText(String.format("%s%s", textView2.getText(), ((List<Question>) result).get(1).getText()));
+            if (SOAP_ACTION.equals("getAllResponse")) {
+                if (mPieChart != null) {
+                    ValueLineChart mCubicValueLineChart = (ValueLineChart) mPieChart;
+                    ValueLineSeries series = new ValueLineSeries();
+                    series.setColor(new Random().nextInt());
+                    Map<String, Integer> hashMapForAnswer1 = new HashMap<String, Integer>();
+                    for (int k = 0; k < result.size(); k++) {
+                        Object object = result.get(k);
+                        if (hashMapForAnswer1.containsKey(object.toString())) {
+                            hashMapForAnswer1.put(object.toString(), hashMapForAnswer1.get(object.toString()) + 1);
+                        } else {
+                            hashMapForAnswer1.put(object.toString(), 1);
+                        }
+                    }
+                    series.addPoint(new ValueLinePoint("", 100.0f));
+                    for (String key : hashMapForAnswer1.keySet()) {
+                        series.addPoint(new ValueLinePoint(key,  (float)hashMapForAnswer1.get(key)/result.size() * 100));
+                    }
+                    series.addPoint(new ValueLinePoint("", .1f));
+                    mCubicValueLineChart.addSeries(series);
+                    mCubicValueLineChart.startAnimation();
+                } else {
+                    ValueLineChart mCubicValueLineChart = (ValueLineChart) mPieChart2;
+                    ValueLineSeries series = new ValueLineSeries();
+                    series.setColor(new Random().nextInt());
+                    Map<String, Integer> hashMapForAnswer1 = new HashMap<String, Integer>();
+                    for (int k = 0; k < result.size(); k++) {
+                        Object object = result.get(k);
+                        if (hashMapForAnswer1.containsKey(object.toString())) {
+                            hashMapForAnswer1.put(object.toString(), hashMapForAnswer1.get(object.toString()) + 1);
+                        } else {
+                            hashMapForAnswer1.put(object.toString(), 1);
+                        }
+                    }
+                    series.addPoint(new ValueLinePoint("", 100.0f));
+                    for (String key : hashMapForAnswer1.keySet()) {
+                        series.addPoint(new ValueLinePoint(key,  (float)hashMapForAnswer1.get(key)/result.size() * 100));
+                    }
+                    series.addPoint(new ValueLinePoint("", .1f));
+                    mCubicValueLineChart.addSeries(series);
+                    mCubicValueLineChart.startAnimation();
+                }
+            } else {
+                TextView textView1 = (TextView) mPieChart;
+                TextView textView2 = (TextView) mPieChart2;
+                textView1.setText(String.format("%s%s", textView1.getText(), ((List<Question>) result).get(0).getText()));
+                textView2.setText(String.format("%s%s", textView2.getText(), ((List<Question>) result).get(1).getText()));
+            }
         }
     }
 
@@ -139,7 +186,7 @@ public class CallWebService extends AsyncTask<String, Void, String> {
         String URL = "http://192.168.137.126:8080/ws";
         String NAMESPACE = "http://192.168.137.126:8080/soapservice";
         String envelope;
-        if(this.PARAMETER_NAME.equals("")) {
+        if (this.PARAMETER_NAME.equals("")) {
             envelope = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:tns=\"" + NAMESPACE + "\">" +
                     "<soapenv:Body>" +
                     "<tns:" + this.METHOD_NAME + ">" +

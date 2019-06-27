@@ -22,6 +22,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".RequestActivity"></activity>
+        <activity android:name=".QuestionStatisticActivity"></activity>
     </application>
 
 </manifest>

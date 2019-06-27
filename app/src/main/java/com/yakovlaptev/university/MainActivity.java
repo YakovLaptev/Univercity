@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity
     public void onClick(View v){
         Intent intent;
         if(v.getId() == R.id.button14) {
-            intent = new Intent(MainActivity.this, RequestActivity.class);
+            intent = new Intent(MainActivity.this, QuestionStatisticActivity.class);
         } else {
             intent = new Intent(MainActivity.this, RequestActivity.class);
         }
