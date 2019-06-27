@@ -1,73 +1,95 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:scrollbarStyle="insideOverlay"
-    android:layout_marginStart="2dp"
-    android:layout_marginEnd="2dp"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent">
+    android:layout_height="match_parent"
+    android:background="#ffffff"
+    android:orientation="vertical">
 
-    <android.support.constraint.ConstraintLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".RequestActivity">
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="2dp"
+        android:layout_marginStart="2dp"
+        android:scrollbarStyle="insideOverlay"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
-        <TextView
-            android:id="@+id/textView5"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Questions statistic" />
-
-        <TextView
-            android:id="@+id/textView6"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/textView5"
-            android:layout_marginTop="8dp"
-            android:text="Question 1: "
-            app:layout_constraintTop_toBottomOf="@+id/textView5" />
-
-        <TextView
-            android:id="@+id/textView4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/valueLineChart1"
-            android:text="Question 2: "
-            app:layout_constraintTop_toBottomOf="@+id/valueLineChart1" />
-
-        <org.eazegraph.lib.charts.ValueLineChart
-            android:id="@+id/valueLineChart1"
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/container_page"
             android:layout_width="match_parent"
-            android:layout_height="220dp"
-            android:layout_below="@+id/textView6"
-            app:egUseCubic="true"
-            app:egUseOverlapFill="true"
-            app:egCurveSmoothness="0.4"
-            app:egIndicatorLineColor="#FE6DA8"
-            app:egLegendHeight="40dp"
-            app:egShowStandardValue="true"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView6" />
+            android:layout_height="match_parent"
+            tools:context=".RequestActivity"
+            android:background="#fff"
+            android:orientation="vertical">
 
-        <org.eazegraph.lib.charts.ValueLineChart
-            android:id="@+id/valueLineChart2"
-            android:layout_width="match_parent"
-            android:layout_height="220dp"
-            android:layout_below="@+id/textView4"
-            app:egUseCubic="true"
-            app:egUseOverlapFill="true"
-            app:egCurveSmoothness="0.4"
-            app:egIndicatorLineColor="#ebfe6d"
-            app:egLegendHeight="40dp"
-            app:egShowStandardValue="true"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView4" />
+            <TextView
+                android:id="@+id/textView5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Questions statistic" />
 
+            <TextView
+                android:id="@+id/textView6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/textView5"
+                android:layout_marginTop="8dp"
+                android:text="Question 1: "
+                app:layout_constraintTop_toBottomOf="@+id/textView5" />
 
-    </android.support.constraint.ConstraintLayout>
+            <TextView
+                android:id="@+id/textView4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/valueLineChart1"
+                android:text="Question 2: "
+                app:layout_constraintTop_toBottomOf="@+id/valueLineChart1" />
 
-</ScrollView>
+            <org.eazegraph.lib.charts.ValueLineChart
+                android:id="@+id/valueLineChart1"
+                android:layout_width="match_parent"
+                android:layout_height="220dp"
+                android:layout_below="@+id/textView6"
+                app:egCurveSmoothness="0.4"
+                app:egIndicatorLineColor="#FE6DA8"
+                app:egLegendHeight="40dp"
+                app:egShowStandardValue="true"
+                app:egUseCubic="true"
+                app:egUseOverlapFill="true"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView6" />
+
+            <org.eazegraph.lib.charts.ValueLineChart
+                android:id="@+id/valueLineChart2"
+                android:layout_width="match_parent"
+                android:layout_height="220dp"
+                android:layout_below="@+id/textView4"
+                app:egCurveSmoothness="0.4"
+                app:egIndicatorLineColor="#ebfe6d"
+                app:egLegendHeight="40dp"
+                app:egShowStandardValue="true"
+                app:egUseCubic="true"
+                app:egUseOverlapFill="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView4" />
+
+            <Button
+                android:id="@+id/export_button"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/valueLineChart2"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:background="@android:color/holo_green_dark"
+                android:text="Export to PDF"
+                android:textStyle="bold|italic"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/valueLineChart2" />
+
+        </android.support.constraint.ConstraintLayout>
+    </ScrollView>
+</LinearLayout>
